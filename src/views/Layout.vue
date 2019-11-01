@@ -1,15 +1,15 @@
 <template>
-  <a-layout id="components-layout-demo-top-side-2">
+  <a-layout>
     <a-layout-header class="header">
       <span class="logo">ace-mock</span>
       <a-menu
         theme="dark"
         mode="horizontal"
-        :defaultSelectedKeys="['/']"
         :style="{ lineHeight: '64px' }"
-        @click="goto"
+        :selectedKeys="navSelectedKeys"
+        @click="navClick"
       >
-        <a-menu-item key="/">MockData</a-menu-item>
+        <a-menu-item key="/mockdata">MockData</a-menu-item>
         <a-menu-item key="/newmock">NewMock</a-menu-item>
       </a-menu>
     </a-layout-header>
@@ -17,28 +17,18 @@
       <a-layout-sider width="200" style="background: #fff">
         <a-menu
           mode="inline"
-          :defaultSelectedKeys="['1']"
-          :defaultOpenKeys="['sub1']"
+          :selectedKeys="menuSelectedKeys"
           :style="{ height: '100%', borderRight: 0 }"
+          @click="menuClick"
         >
-          <a-sub-menu key="sub1">
-            <span slot="title">
-              <a-icon type="bars" />NormalAPI
-            </span>
-            <a-menu-item key="1">option1</a-menu-item>
-            <a-menu-item key="2">option2</a-menu-item>
-            <a-menu-item key="3">option3</a-menu-item>
-            <a-menu-item key="4">option4</a-menu-item>
-          </a-sub-menu>
-          <a-sub-menu key="sub2">
-            <span slot="title">
-              <a-icon type="profile" />GraphQL
-            </span>
-            <a-menu-item key="5">option5</a-menu-item>
-            <a-menu-item key="6">option6</a-menu-item>
-            <a-menu-item key="7">option7</a-menu-item>
-            <a-menu-item key="8">option8</a-menu-item>
-          </a-sub-menu>
+          <template v-if="isMockdata">
+            <a-menu-item key="/mockdata/normalapi">NormalAPI</a-menu-item>
+            <a-menu-item key="/mockdata/graphql">GraphQL</a-menu-item>
+          </template>
+          <template v-else>
+            <a-menu-item key="/newmock/normalapi">NormalAPI</a-menu-item>
+            <a-menu-item key="/newmock/graphql">GraphQL</a-menu-item>
+          </template>
         </a-menu>
       </a-layout-sider>
       <a-layout style="margin: 24px; background:#fff;min-height: 280px;">
@@ -56,8 +46,25 @@ export default {
   name: "Layout",
   components: {
   },
+  data() {
+    return {
+      navSelectedKeys: ['/mockdata'],
+      menuSelectedKeys: ['/mockdata/normalapi'],
+    }
+  },
+  computed: {
+    isMockdata() {
+      return this.$route.path === '/' || this.$route.path.indexOf('mockdata') !== -1;
+    }
+  },
   methods: {
-    goto(path) {
+    navClick(path) {
+      this.navSelectedKeys = [path.key];
+      this.menuSelectedKeys = [path.key + '/normalapi'];
+      this.$router.push(path.key + '/normalapi');
+    },
+    menuClick(path) {
+      this.menuSelectedKeys = [path.key];
       this.$router.push(path.key);
     }
   }

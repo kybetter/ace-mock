@@ -1,5 +1,5 @@
 <template>
   <div>
-    <h1>This is new mock page</h1>
+    <h1>This is new mock API page</h1>
   </div>
 </template>
