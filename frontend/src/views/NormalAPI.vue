@@ -84,7 +84,7 @@ export default {
 </script>
 <style>
 .CodeMirror {
-  height: 572px;
+  height: calc(100vh - 94px);
 }
 </style>
 <style scoped lang="less">
@@ -94,7 +94,7 @@ export default {
 }
 .list {
   .list-content {
-    height: 540px;
+    height: calc(100vh - 126px);
     overflow: auto;
     border: 1px solid #e8e8e8;
     border-top: 0 none;
