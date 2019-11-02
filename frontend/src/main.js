@@ -15,7 +15,7 @@ const baseURL = process.env.NODE_ENV === 'production' ?
 `//${location.host}/` : '//localhost:12345/';
 
 Vue.prototype.$http = axios.create({
-  baseURL: baseURL + 'api',
+  baseURL: baseURL + 'ace-mock-api',
   timeout: 10000,
 });
 

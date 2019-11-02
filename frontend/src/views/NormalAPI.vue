@@ -12,7 +12,9 @@
               :class="['list-item', {active: list.id === currentList.id}]"
               v-for="list in lists"
               :key="list.id"
-            >{{list.name}}</div>
+            >
+              <span>[{{list.method}}] </span><span>{{list.name}}</span>
+            </div>
           </div>
         </div>
       </a-col>
@@ -31,7 +33,7 @@ import "codemirror/keymap/sublime.js";
 import "codemirror/addon/lint/javascript-lint.js";
 import "codemirror/addon/lint/json-lint.js";
 import "codemirror/addon/lint/lint.css";
-import "codemirror/addon/comment/comment.js"
+import "codemirror/addon/comment/comment.js";
 
 export default {
   data() {
@@ -82,7 +84,7 @@ export default {
 </script>
 <style>
 .CodeMirror {
-  height: 552px;
+  height: 572px;
 }
 </style>
 <style scoped lang="less">
@@ -92,7 +94,7 @@ export default {
 }
 .list {
   .list-content {
-    max-height: 520px;
+    height: 540px;
     overflow: auto;
     border: 1px solid #e8e8e8;
     border-top: 0 none;

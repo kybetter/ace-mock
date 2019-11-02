@@ -9,7 +9,7 @@ function run(context) {
   createMockFile();
   require('./socket/socket')(server);
   app.use(cors());
-  app.use('/api', require('./router'));
+  app.use('/ace-mock-api', require('./router'));
   // add websocket server
   const { port, staticPath } = context;
   app.use('/', express.static(staticPath))

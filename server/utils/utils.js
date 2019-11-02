@@ -14,7 +14,8 @@ exports.createMockFile = () => {
       normalapi: [
         {
           id: 0,
-          name: "demo1",
+          name: "/demo",
+          method: "POST", 
           content: `{\n  "code": 200,\n  "message": "success",\n  "data": {\n    "userName": "Alice",\n  }\n}\n`
         }
       ]

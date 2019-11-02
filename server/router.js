@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const mock = require(mockFile);
 
-// /api/get-normal-api-list
+// /ace-mock-api/get-normal-api-list
 router.post('/get-normal-api-list', (req, res) => {
+  const mock = require(mockFile);
   res.send({
     code: 200,
     message: 'ok',

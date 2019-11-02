@@ -8,11 +8,10 @@
       showIcon
     />
     <a-layout-header class="header">
-      <span class="logo">ace-mock</span>
+      <div class="logo">ace-mock</div>
       <a-menu
         theme="dark"
         mode="horizontal"
-        :style="{ lineHeight: '64px' }"
         :selectedKeys="navSelectedKeys"
         @click="navClick"
       >
@@ -21,7 +20,7 @@
       </a-menu>
     </a-layout-header>
     <a-layout>
-      <a-layout-sider width="200" style="background: #fff">
+      <a-layout-sider class="sider">
         <a-menu
           mode="inline"
           :selectedKeys="menuSelectedKeys"
@@ -101,14 +100,20 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.header {
+  height: 46px;
+  line-height: 46px;
+  padding: 0 30px;
+}
+.sider {
+  min-height: calc(100vh - 46px);
+}
 .logo {
-  width: 120px;
-  height: 30px;
-  // background: rgba(255, 255, 255, 0.2);
-  margin: 16px 28px 16px 0;
+  width: 170px;
+  height: 46px;
   float: left;
   color: white;
-  line-height: 30px;
-  font-size: 26px;
+  line-height: 42px;
+  font-size: 28px;
 }
 </style>
