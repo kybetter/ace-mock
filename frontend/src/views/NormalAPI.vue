@@ -8,12 +8,13 @@
           </div>
           <div class="list-content">
             <div
-              @click="clickItem(list)"
-              :class="['list-item', {active: list.id === currentList.id}]"
-              v-for="list in lists"
-              :key="list.id"
+              @click="clickItem(item)"
+              :class="['list-item', {active: item.id === currentApi.id}]"
+              v-for="item in lists"
+              :key="item.id"
             >
-              <span>[{{list.method}}] </span><span>{{list.name}}</span>
+              <span>[{{item.method}}]&nbsp;</span>
+              <span>{{item.name}}</span>
             </div>
           </div>
         </div>
@@ -25,6 +26,7 @@
   </div>
 </template>
 <script>
+import { mapActions } from "vuex";
 import CodeMirror from "codemirror";
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/monokai.css";
@@ -38,13 +40,25 @@ import "codemirror/addon/comment/comment.js";
 export default {
   data() {
     return {
-      lists: [],
-      currentList: {},
       editor: null
     };
   },
   created() {
-    this.getNormalApiLists();
+    this.$store.dispatch("requestNormalApiList");
+  },
+  computed: {
+    lists() {
+      return this.$store.state.normalApiList;
+    },
+    currentApi() {
+      return this.$store.state.currentApi;
+    }
+  },
+  watch: {
+    '$store.state.currentApi'(val) {
+      // after create api and click list, set editor value
+      this.editor.setValue(val.content);
+    }
   },
   mounted() {
     this.editor = CodeMirror.fromTextArea(this.$refs.editor, {
@@ -53,32 +67,40 @@ export default {
       mode: "application/json",
       lineNumbers: true,
       line: true,
-      keyMap: 'sublime',
-      gutters:["CodeMirror-linenumbers", "CodeMirror-foldgutter","CodeMirror-lint-markers"],
+      keyMap: "sublime",
+      gutters: [
+        "CodeMirror-linenumbers",
+        "CodeMirror-foldgutter",
+        "CodeMirror-lint-markers"
+      ],
       lint: true,
-      smartIndent : true,
+      smartIndent: true
     });
 
-    this.editor.on('change', () => {
-      this.$io.emit('setValue', 
-        {
-          id: this.currentList.id,
-          name: this.currentList.name,
-          content: this.editor.getValue()
-        }
-      )
-    })
+    this.editor.on("change", () => {
+      this.setValue();
+    });
   },
   methods: {
-    clickItem(list) {
-      this.currentList = list;
-      this.editor.setValue(this.currentList.content);
+    clickItem(item) {
+      if (this.currentApi.id === item.id) return;
+      this.$store.dispatch("requestNormalApiList").then(() => {
+        this.$store.commit("setCurrentApi", item);
+        // console.log(234);
+        // this.editor.setValue(item.content);
+      });
     },
-    getNormalApiLists() {
-      this.$http.post('get-normal-api-list').then(res => {
-        this.lists = res.data.data;
-      })
+    setValue() {
+      this.$io.emit("setValue", {
+        id: this.currentApi.id,
+        name: this.currentApi.name,
+        content: this.editor.getValue()
+      });
     }
+  },
+  beforeDestroy() {
+    this.$store.commit("setNormalApiList", []);
+    this.$store.commit("setCurrentApi", {});
   }
 };
 </script>

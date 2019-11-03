@@ -6,6 +6,7 @@ import router from './router';
 import store from './store';
 import 'ant-design-vue/dist/antd.css';
 import io from 'socket.io-client';
+import {http} from './utils/utils';
 
 Vue.use(Antd);
 
@@ -13,11 +14,9 @@ Vue.config.productionTip = false;
 
 const baseURL = process.env.NODE_ENV === 'production' ?
 `//${location.host}/` : '//localhost:12345/';
+window.aceMockUrl = baseURL + 'ace-mock-api';
 
-Vue.prototype.$http = axios.create({
-  baseURL: baseURL + 'ace-mock-api',
-  timeout: 10000,
-});
+Vue.prototype.$http = http(aceMockUrl);
 
 Vue.prototype.$io = io(baseURL);
 

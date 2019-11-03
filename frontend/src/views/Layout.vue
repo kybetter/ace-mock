@@ -12,11 +12,12 @@
       <a-menu
         theme="dark"
         mode="horizontal"
-        :selectedKeys="navSelectedKeys"
-        @click="navClick"
+        :selectedKeys="['CreateNew']"
+        @click="openCreate"
       >
-        <a-menu-item key="/mockdata">MockData</a-menu-item>
-        <a-menu-item key="/newmock">NewMock</a-menu-item>
+        <a-menu-item key="CreateNew">
+          <a-icon type="plus-circle" />CreateNew
+        </a-menu-item>
       </a-menu>
     </a-layout-header>
     <a-layout>
@@ -27,13 +28,9 @@
           :style="{ height: '100%', borderRight: 0 }"
           @click="menuClick"
         >
-          <template v-if="isMockdata">
-            <a-menu-item key="/mockdata/normalapi">NormalAPI</a-menu-item>
-            <a-menu-item key="/mockdata/graphql">GraphQL</a-menu-item>
-          </template>
-          <template v-else>
-            <a-menu-item key="/newmock/normalapi">NormalAPI</a-menu-item>
-            <a-menu-item key="/newmock/graphql">GraphQL</a-menu-item>
+          <template>
+            <a-menu-item key="/normalapi">NormalAPI</a-menu-item>
+            <a-menu-item key="/graphql">GraphQL</a-menu-item>
           </template>
         </a-menu>
       </a-layout-sider>
@@ -43,26 +40,25 @@
         </a-layout-content>
       </a-layout>
     </a-layout>
+
+    <create-dialog ref="create-dialog" />
   </a-layout>
 </template>
 
 <script>
+import CreateDialog from './createDialog.vue';
+
 export default {
   name: "Layout",
-  components: {},
+  components: {CreateDialog},
   data() {
     return {
-      navSelectedKeys: [],
       menuSelectedKeys: [],
       serverClosed: false,
     };
   },
   computed: {
-    isMockdata() {
-      return (
-        this.$route.path === "/" || this.$route.path.indexOf("mockdata") !== -1
-      );
-    }
+    
   },
   created() {
     this.setSelectedKeys();
@@ -77,11 +73,6 @@ export default {
         this.serverClosed = false;
       });
     },
-    navClick(path) {
-      this.navSelectedKeys = [path.key];
-      this.menuSelectedKeys = [path.key + "/normalapi"];
-      this.$router.push(path.key + "/normalapi");
-    },
     menuClick(path) {
       this.menuSelectedKeys = [path.key];
       this.$router.push(path.key);
@@ -89,12 +80,13 @@ export default {
     setSelectedKeys() {
       const {path} = this.$route;
       if (path === '/') {
-        this.navSelectedKeys = ["/mockdata"];
-        this.menuSelectedKeys = ["/mockdata/normalapi"];
+        this.menuSelectedKeys = ["/normalapi"];
       } else {
-        this.navSelectedKeys = ['/' + path.split('/')[1]];
         this.menuSelectedKeys = [path];
       }
+    },
+    openCreate() {
+      this.$refs['create-dialog'].visible = true;
     }
   }
 };
