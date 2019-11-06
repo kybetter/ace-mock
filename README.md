@@ -24,6 +24,6 @@ $ ace-mock
 # or
 $ ace-mock --port=8080
 ```
-Then it will start a service to serve at:`http://localhost:12345`address.
+Then it will start a service to serve at:`http://localhost:12345`address in default.
 
 Now, you can browse this page and set your api.
