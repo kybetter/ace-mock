@@ -30,7 +30,7 @@
         >
           <template>
             <a-menu-item key="/normalapi">NormalAPI</a-menu-item>
-            <a-menu-item key="/graphql">GraphQL</a-menu-item>
+            <!-- <a-menu-item key="/graphql">GraphQL</a-menu-item> -->
           </template>
         </a-menu>
       </a-layout-sider>
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import CreateDialog from './createDialog.vue';
+import CreateDialog from './CreateDialog.vue';
 
 export default {
   name: "Layout",

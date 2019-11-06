@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const express = require('express');
 
 /**
  * Create mock.json file and set global.mockFile variable.
@@ -33,9 +34,10 @@ exports.createMockFile = () => {
  */
 exports.setCustomApi = (app) => {
   const mock = require(mockFile);
-  const normalapi = mock.normalapi;
-  normalapi.forEach(api => {
-    app[api.method.toLowerCase()](api.name, (req, res) => {
+  // make sure old api is not avaliable.
+  router = new express.Router();
+  mock.normalapi.forEach(api => {
+    router[api.method.toLowerCase()](api.name, (req, res) => {
       res.send(api.content);
     })
   })

@@ -12,8 +12,7 @@ module.exports = (app) => {
     });
   })
 
-  // /ace-mock-api/create-normal-api
-  router.post('/create-normal-api', (req, res) => {
+  function checkApiExist(req, res) {
     if (
       req.body.name.indexOf('ace-mock-api') !== -1 ||
       req.body.name.indexOf('graphql') !== -1
@@ -22,8 +21,14 @@ module.exports = (app) => {
         code: 400,
         message: '"ace-mock-api" or "graphql" api name alredy in used.',
       });
-      return;
+      return false;
     }
+    return true;
+  }
+
+  // /ace-mock-api/create-normal-api
+  router.post('/create-normal-api', (req, res) => {
+    if (!checkApiExist(req, res)) return;
     const mock = require(mockFile);
     const newApi = {
       id: ++mock.globalId,
@@ -34,7 +39,7 @@ module.exports = (app) => {
     mock.normalapi.unshift(newApi)
     const fs = require('fs');
     fs.writeFileSync(mockFile, JSON.stringify(mock));
-    newApiEvents.emit('setApi', app);
+    apiEvents.emit('setApi', app);
 
     res.send({
       code: 200,
@@ -42,5 +47,31 @@ module.exports = (app) => {
       data: newApi,
     });
   })
+
+  // /ace-mock-api/edit-normal-api
+  router.post('/edit-normal-api', (req, res) => {
+    if (!checkApiExist(req, res)) return;
+    const mock = require(mockFile);
+    let editItem = null;
+    mock.normalapi.forEach(item => {
+      if (item.id === req.body.id) {
+        editItem = item;
+        item.name = req.body.name;
+        item.method = req.body.method;
+      }
+    })
+    const fs = require('fs');
+    fs.writeFileSync(mockFile, JSON.stringify(mock));
+    apiEvents.emit('setApi', app);
+
+    res.send({
+      code: 200,
+      message: 'ok',
+      data: editItem,
+    });
+  })
+
+  //////////////////////////////
+
   return router;
 };

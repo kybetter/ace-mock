@@ -4,17 +4,21 @@
       <a-col :span="6">
         <div class="list">
           <div class="list-header">
-            <a-input class="search-input" placeholder="search keywords"></a-input>
+            <a-input class="search-input" placeholder="search keywords（coming soon）"></a-input>
           </div>
           <div class="list-content">
-            <div
-              @click="clickItem(item)"
-              :class="['list-item', {active: item.id === currentApi.id}]"
-              v-for="item in lists"
-              :key="item.id"
-            >
-              <span>[{{item.method}}]&nbsp;</span>
-              <span>{{item.name}}</span>
+            <div v-for="item in lists" :key="item.id" class="list-wrapper">
+              <div
+                @click="clickItem(item)"
+                :class="['list-item', {active: item.id === currentApi.id}]"
+              >
+                <span>[{{item.method}}]&nbsp;</span>
+                <span>{{item.name}}</span>
+              </div>
+              <div class="option">
+                <a-button @click="editApi(item)" size="small" icon="edit"></a-button>&nbsp;
+                <a-button type="danger" size="small" icon="delete"></a-button>
+              </div>
             </div>
           </div>
         </div>
@@ -23,10 +27,12 @@
         <textarea ref="editor"></textarea>
       </a-col>
     </a-row>
+
+    <edit-dialog ref="edit-api"></edit-dialog>
   </div>
 </template>
 <script>
-import { mapActions } from "vuex";
+import EditDialog from './EditDialog.vue';
 import CodeMirror from "codemirror";
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/monokai.css";
@@ -38,6 +44,8 @@ import "codemirror/addon/lint/lint.css";
 import "codemirror/addon/comment/comment.js";
 
 export default {
+  name: 'NormalAPI',
+  components: {EditDialog},
   data() {
     return {
       editor: null
@@ -55,9 +63,11 @@ export default {
     }
   },
   watch: {
-    '$store.state.currentApi'(val) {
+    currentApi(val) {
       // after create api and click list, set editor value
-      this.editor.setValue(val.content);
+      if (val) {
+        this.editor.setValue(val.content);
+      }
     }
   },
   mounted() {
@@ -86,8 +96,6 @@ export default {
       if (this.currentApi.id === item.id) return;
       this.$store.dispatch("requestNormalApiList").then(() => {
         this.$store.commit("setCurrentApi", item);
-        // console.log(234);
-        // this.editor.setValue(item.content);
       });
     },
     setValue() {
@@ -96,6 +104,11 @@ export default {
         name: this.currentApi.name,
         content: this.editor.getValue()
       });
+    },
+    editApi(item) {
+      item.type = "NormalAPI";
+      this.$refs['edit-api'].formData = item;
+      this.$refs['edit-api'].visible = true;
     }
   },
   beforeDestroy() {
@@ -120,6 +133,24 @@ export default {
     overflow: auto;
     border: 1px solid #e8e8e8;
     border-top: 0 none;
+    .list-wrapper {
+      position: relative;
+      .option {
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        display: none;
+      }
+      &:hover {
+        .list-item {
+          background: #1890ff;
+          color: white;
+        }
+        .option {
+          display: block;
+        }
+      }
+    }
     .list-item {
       height: 32px;
       line-height: 32px;
@@ -127,10 +158,10 @@ export default {
       border-bottom: 1px solid #e8e8e8;
       cursor: pointer;
     }
-    .list-item:hover {
-      background: #1890ff;
-      color: white;
-    }
+    // .list-item:hover {
+    //   background: #1890ff;
+    //   color: white;
+    // }
     .list-item:last-child {
       border-bottom: 0 none;
     }

@@ -1,12 +1,12 @@
 <template>
-  <a-modal title="Create" v-model="visible" @ok="handleOk">
+  <a-modal title="Edit" v-model="visible" @ok="handleOk">
     <a-form :form="form">
       <a-form-item v-bind="formItemLayout" label="type">
         <a-select
           v-decorator="[
             'type',
             {
-              initialValue: initialType,
+              initialValue: formData.type,
             }
           ]"
           @change="changeType"
@@ -15,13 +15,13 @@
           <!-- <a-select-option value="GraphQL">GraphQL</a-select-option> -->
         </a-select>
       </a-form-item>
-      <template v-if="initialType === 'NormalAPI'">
+      <template v-if="formData.type === 'NormalAPI'">
         <a-form-item v-bind="formItemLayout" label="method">
           <a-select
             v-decorator="[
               'method',
               {
-                initialValue: 'POST',
+                initialValue: formData.method,
               }
             ]"
           >
@@ -34,6 +34,7 @@
             v-decorator="[
             'name',
             {
+              initialValue: formData.name,
               rules: [
                 {
                   required: true,
@@ -51,6 +52,7 @@
           v-decorator="[
           'name',
           {
+            initialValue: formData.name,
             rules: [
               {
                 required: true,
@@ -72,6 +74,7 @@ export default {
     return {
       visible: false,
       initialType: "NormalAPI",
+      formData: {},
       formItemLayout: {
         labelCol: {
           xs: { span: 24 },
@@ -92,7 +95,8 @@ export default {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          this.$http.post("create-normal-api", values).then(res => {
+          values.id = this.formData.id;
+          this.$http.post("edit-normal-api", values).then(res => {
             if (res.data.code === 200) {
               this.$message.success("DONE");
               this.$store.dispatch("requestNormalApiList");
