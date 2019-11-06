@@ -1,3 +1,4 @@
+#! /usr/bin/env node
 const yargsParser = require('yargs-parser');
 const path = require('path');
 const server = require('./server/app');
