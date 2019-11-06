@@ -1,11 +1,11 @@
 {
   "name": "ace-mock",
   "version": "1.0.0",
-  "main": "lib/ace-mock.js",
+  "main": "index.js",
   "license": "MIT",
-  "bin": "lib/ace-mock.js",
+  "bin": "index.js",
   "files": [
-    "lib/",
+    "dist/",
     "server"
   ],
   "scripts": {
