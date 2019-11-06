@@ -8,7 +8,7 @@ const argv = yargsParser(process.argv.slice(2));
 const context = {
   port: argv.port || 12345,
   scriptPath: __dirname,
-  staticPath: path.resolve('dist'),
+  staticPath: path.resolve(__dirname, 'dist'),
 };
 
 server.run(context);
