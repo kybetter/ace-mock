@@ -1,135 +1,181 @@
 <template>
   <div>
     <a-row>
-      <a-col :span="6">
+      <a-col :span="5">
         <div class="list">
           <div class="list-header">
-            <a-input class="search-input" placeholder="search keywords（coming soon）"></a-input>
+            <a-input
+              class="search-input"
+              placeholder="search keywords（coming soon）"
+            ></a-input>
+            <div class="create">
+              <a-button icon="plus" type="link" @click="openCreateApiDialog"
+                >create new</a-button
+              >
+            </div>
           </div>
           <div class="list-content">
-            <div v-for="item in lists" :key="item.id" class="list-wrapper">
+            <div
+              v-for="item in apiList"
+              :key="item.doc._id"
+              class="list-wrapper"
+            >
               <div
-                @click="clickItem(item)"
-                :class="['list-item', {active: item.id === currentApi.id}]"
+                @click="setCurrentApi(item)"
+                :class="[
+                  'list-item',
+                  { active: item.doc._id === currentApi._id }
+                ]"
               >
-                <span>[{{item.method}}]&nbsp;</span>
-                <span>{{item.name}}</span>
+                <span>[{{ item.doc.method }}]&nbsp;</span>
+                <span>{{ item.doc.api }}</span>
               </div>
               <div class="option">
-                <a-button @click="editApi(item)" size="small" icon="edit"></a-button>&nbsp;
-                <a-button type="danger" size="small" icon="delete"></a-button>
+                <a-button
+                  @click="openEditApiDialog(item)"
+                  size="small"
+                  icon="edit"
+                ></a-button
+                >&nbsp;
+                <a-button
+                  type="danger"
+                  size="small"
+                  icon="delete"
+                  @click="deleteApi(item)"
+                ></a-button>
               </div>
             </div>
           </div>
         </div>
       </a-col>
-      <a-col :span="18">
-        <textarea ref="editor"></textarea>
+      <a-col :span="19">
+        <div class="cover-container">
+          <div class="cover" v-if="!isSetCurrentApi"></div>
+          <editor
+            ref="editor"
+            class="editor"
+            @change="editorChange"
+            :language="editorLanguage"
+          />
+        </div>
       </a-col>
     </a-row>
-
-    <edit-dialog ref="edit-api"></edit-dialog>
+    <normal-api-dialog ref="api-dialog" @success="onCreateSuccess" />
   </div>
 </template>
 <script>
-import EditDialog from './EditDialog.vue';
-import CodeMirror from "codemirror";
-import "codemirror/lib/codemirror.css";
-import "codemirror/theme/monokai.css";
-import "codemirror/mode/javascript/javascript.js";
-import "codemirror/keymap/sublime.js";
-import "codemirror/addon/lint/javascript-lint.js";
-import "codemirror/addon/lint/json-lint.js";
-import "codemirror/addon/lint/lint.css";
-import "codemirror/addon/comment/comment.js";
+import Editor from "@/components/Editor.vue";
+import NormalApiDialog from "@/components/NormalApiDialog.vue";
 
 export default {
-  name: 'NormalAPI',
-  components: {EditDialog},
+  name: "NormalAPI",
+  components: { NormalApiDialog, Editor },
   data() {
     return {
-      editor: null
+      editor: null,
+      editorValue: "",
+      editorLanguage: "json",
+      apiList: [],
+      currentApi: {}
     };
   },
-  created() {
-    this.$store.dispatch("requestNormalApiList");
-  },
   computed: {
-    lists() {
-      return this.$store.state.normalApiList;
+    isSetCurrentApi() {
+      return Object.keys(this.currentApi).length > 0;
     },
-    currentApi() {
-      return this.$store.state.currentApi;
-    }
   },
-  watch: {
-    currentApi(val) {
-      // after create api and click list, set editor value
-      if (val) {
-        this.editor.setValue(val.content);
-      }
-    }
-  },
-  mounted() {
-    this.editor = CodeMirror.fromTextArea(this.$refs.editor, {
-      tabSize: 2,
-      theme: "monokai",
-      mode: "application/json",
-      lineNumbers: true,
-      line: true,
-      keyMap: "sublime",
-      gutters: [
-        "CodeMirror-linenumbers",
-        "CodeMirror-foldgutter",
-        "CodeMirror-lint-markers"
-      ],
-      lint: true,
-      smartIndent: true
-    });
-
-    this.editor.on("change", () => {
-      this.setValue();
-    });
+  created() {
+    this.requestNormalApiList();
   },
   methods: {
-    clickItem(item) {
-      if (this.currentApi.id === item.id) return;
-      this.$store.dispatch("requestNormalApiList").then(() => {
-        this.$store.commit("setCurrentApi", item);
+    requestNormalApiList() {
+      return this.$http.post("get-normal-api-list").then(res => {
+        this.apiList = res.data.data.rows;
       });
     },
-    setValue() {
-      this.$io.emit("setValue", {
-        id: this.currentApi.id,
-        name: this.currentApi.name,
-        content: this.editor.getValue()
-      });
+
+    setCurrentApi(item) {
+      if (this.currentApi._id === item.doc._id) return;
+      this.currentApi = item.doc;
+      this.$refs.editor.setValue(this.currentApi.content);
     },
-    editApi(item) {
-      item.type = "NormalAPI";
-      this.$refs['edit-api'].formData = item;
-      this.$refs['edit-api'].visible = true;
+
+    editorChange(content) {
+      if (Object.keys(this.currentApi).length > 0) {
+        this.currentApi.content = content;
+        this.$io.emit("setValue", {
+          id: this.currentApi._id,
+          api: this.currentApi.api,
+          content
+        });
+      }
+    },
+
+    openEditApiDialog(item) {
+      this.$refs["api-dialog"].type = "edit";
+      this.$refs["api-dialog"].visible = true;
+      this.$refs["api-dialog"].formData = item.doc;
+    },
+
+    openCreateApiDialog() {
+      this.$refs["api-dialog"].type = "create";
+      this.$refs["api-dialog"].visible = true;
+    },
+
+    async onCreateSuccess(value) {
+      try {
+        await this.requestNormalApiList();
+        this.apiList.forEach(item => {
+          if (item.doc.api === value.api) {
+            this.currentApi = item.doc;
+            this.$refs.editor.setValue(this.currentApi.content);
+          }
+        });
+      } catch (e) {
+        throw e;
+      }
+    },
+
+    deleteApi(item) {
+      this.$http.post("delete-normal-api", item.doc).then(() => {
+        this.$message.success("DONE");
+        if (item.doc._id === this.currentApi._id) {
+          this.currentApi = {};
+          this.$refs.editor.setValue("");
+        }
+        this.requestNormalApiList();
+      });
     }
-  },
-  beforeDestroy() {
-    this.$store.commit("setNormalApiList", []);
-    this.$store.commit("setCurrentApi", {});
   }
 };
 </script>
-<style>
-.CodeMirror {
-  height: calc(100vh - 94px);
-}
-</style>
 <style scoped lang="less">
+.editor {
+  height: calc(100vh - 46px);
+}
+.create {
+  text-align: center;
+}
 .search-input {
   border-radius: 0;
   border-color: #e8e8e8;
 }
+.cover-container {
+  position: relative;
+  .cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,.3);
+    z-index: 999;
+    cursor: not-allowed;
+  }
+}
 .list {
   .list-content {
-    height: calc(100vh - 126px);
+    height: calc(100vh - 110px);
     overflow: auto;
     border: 1px solid #e8e8e8;
     border-top: 0 none;

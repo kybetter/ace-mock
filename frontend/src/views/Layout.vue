@@ -12,53 +12,30 @@
       <a-menu
         theme="dark"
         mode="horizontal"
-        :selectedKeys="['CreateNew']"
-        @click="openCreate"
+        :selectedKeys="menuSelectedKeys"
+        @click="menuClick"
       >
-        <a-menu-item key="CreateNew">
-          <a-icon type="plus-circle" />CreateNew
-        </a-menu-item>
+        <a-menu-item key="/normalapi">NormalAPI</a-menu-item>
       </a-menu>
     </a-layout-header>
     <a-layout>
-      <a-layout-sider class="sider">
-        <a-menu
-          mode="inline"
-          :selectedKeys="menuSelectedKeys"
-          :style="{ height: '100%', borderRight: 0 }"
-          @click="menuClick"
-        >
-          <template>
-            <a-menu-item key="/normalapi">NormalAPI</a-menu-item>
-            <!-- <a-menu-item key="/graphql">GraphQL</a-menu-item> -->
-          </template>
-        </a-menu>
-      </a-layout-sider>
-      <a-layout style="margin: 24px; background:#fff;min-height: 280px;">
+      <a-layout style="background:#fff;">
         <a-layout-content>
           <router-view />
         </a-layout-content>
       </a-layout>
     </a-layout>
-
-    <create-dialog ref="create-dialog" />
   </a-layout>
 </template>
 
 <script>
-import CreateDialog from './CreateDialog.vue';
-
 export default {
   name: "Layout",
-  components: {CreateDialog},
   data() {
     return {
       menuSelectedKeys: [],
       serverClosed: false,
     };
-  },
-  computed: {
-    
   },
   created() {
     this.setSelectedKeys();
@@ -66,10 +43,10 @@ export default {
   },
   methods: {
     monitSocket() {
-      this.$io.on("connect_error", err => {
+      this.$io.on("connect_error", () => {
         this.serverClosed = true;
       });
-      this.$io.on("reconnect", number => {
+      this.$io.on("reconnect", () => {
         this.serverClosed = false;
       });
     },
@@ -85,9 +62,6 @@ export default {
         this.menuSelectedKeys = [path];
       }
     },
-    openCreate() {
-      this.$refs['create-dialog'].visible = true;
-    }
   }
 };
 </script>

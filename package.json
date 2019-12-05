@@ -9,13 +9,24 @@
     "server"
   ],
   "scripts": {
-    "serve": "npm run serve --prefix ./frontend",
-    "build": "npm run build --prefix ./frontend"
+    "front:serve": "npm run serve --prefix ./frontend",
+    "front:build": "npm run build --prefix ./frontend",
+    "server:run": "node ./index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "pouchdb": "^7.1.1",
     "socket.io": "^2.3.0",
-    "yargs-parser": "^16.0.0"
+    "yargs-parser": "^16.1.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.6",
+    "@types/express": "^4.17.2",
+    "@types/node": "^12.12.14",
+    "@types/pouchdb": "^6.4.0",
+    "@types/socket.io": "^2.1.4",
+    "@types/yargs-parser": "^13.1.0",
+    "typescript": "^3.7.2"
   }
 }
