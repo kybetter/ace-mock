@@ -7,14 +7,7 @@ import * as monaco from "monaco-editor";
 
 export default {
   name: "Editor",
-  model: {
-    event: 'change',
-  },
   props: {
-    value: {
-      type: String,
-      default: "",
-    },
     language: {
       type: String,
       default: "json"
@@ -22,23 +15,28 @@ export default {
     theme: {
       type: String,
       default: "vs-dark"
-    }
+    },
   },
   data() {
     return {
-      editor: null,
+      editor: null
     };
   },
   mounted() {
     this.editor = monaco.editor.create(this.$refs.editor, {
       value: this.value,
       language: this.language,
-      theme: this.theme,
+      theme: this.theme
     });
     this.editor.onKeyUp(() => {
-      this.$emit('change', this.editor.getValue());
+      this.$emit("change", this.editor.getValue());
     });
-  }
+  },
+  methods: {
+    setValue(value) {
+      this.editor.setValue(value);
+    },
+  },
 };
 </script>
 

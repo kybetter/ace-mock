@@ -1,12 +1,12 @@
 <template>
-  <a-modal title="Create" v-model="visible" @ok="handleOk">
+  <a-modal title="Create" v-model="visible" @ok="handleOk" @afterClose="afterClose">
     <a-form :form="form">
       <a-form-item v-bind="formItemLayout" label="method">
         <a-select
           v-decorator="[
             'method',
             {
-              initialValue: 'POST'
+              initialValue: formData.method || 'POST'
             }
           ]"
         >
@@ -19,6 +19,7 @@
           v-decorator="[
             'api',
             {
+              initialValue: formData.api,
               rules: [
                 {
                   required: true,
@@ -39,6 +40,8 @@ export default {
   data() {
     return {
       visible: false,
+      type: "create",
+      formData: {},
       formItemLayout: {
         labelCol: {
           xs: { span: 24 },
@@ -59,18 +62,39 @@ export default {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          this.$http.post("create-normal-api", values).then(res => {
-            if (res.data.code === 200) {
-              this.$message.success("DONE");
-              this.visible = false;
-              this.$emit('success');
-            } else {
-              this.$message.error(res.data.message);
-            }
-          });
+          if (this.type === "create") {
+            this.$http.post("create-normal-api", values).then(res => {
+              if (res.data.code === 200) {
+                this.$message.success("DONE");
+                this.visible = false;
+                this.$emit("success", values);
+              } else {
+                this.$message.error(res.data.message);
+              }
+            });
+          } else {
+            this.$http.post("edit-normal-api", {
+              ...values,
+              _id: this.formData._id,
+            }).then(res => {
+              if (res.data.code === 200) {
+                this.$message.success("DONE");
+                this.visible = false;
+                this.$emit("success", values);
+              } else {
+                this.$message.error(res.data.message);
+              }
+            });
+          }
         }
       });
     },
+
+    afterClose() {
+      this.formData = {};
+      this.form.resetFields();
+    },
+
     validateApi(rule, value, callback) {
       if (!value || value.length < 2) {
         callback("Please fill in api url");
