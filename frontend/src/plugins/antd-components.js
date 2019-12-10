@@ -48,7 +48,7 @@ import {
   // Tree,
   // TreeSelect,
   // Tabs,
-  // Tag,
+  Tag,
   // TimePicker,
   // Timeline,
   // Tooltip,
@@ -121,7 +121,7 @@ Vue.use(Select);
 // Vue.use(Tree);
 // Vue.use(TreeSelect);
 // Vue.use(Tabs);
-// Vue.use(Tag);
+Vue.use(Tag);
 // Vue.use(TimePicker);
 // Vue.use(Timeline);
 // Vue.use(Tooltip);

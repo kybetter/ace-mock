@@ -1,5 +1,5 @@
 <template>
-  <a-modal title="Create" v-model="visible" @ok="handleOk" @afterClose="afterClose">
+  <a-modal title="Create" v-model="visible" @ok="handleOk">
     <a-form :form="form">
       <a-form-item v-bind="formItemLayout" label="method">
         <a-select
@@ -56,6 +56,13 @@ export default {
   },
   beforeCreate() {
     this.form = this.$form.createForm(this, { name: "newMock" });
+  },
+  watch: {
+    visible(val) {
+      if (!val) {
+        this.afterClose();
+      }
+    },
   },
   methods: {
     handleOk(e) {
