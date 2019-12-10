@@ -1,6 +1,6 @@
 {
   "name": "ace-mock",
-  "version": "1.0.3",
+  "version": "2.1.0",
   "main": "index.js",
   "license": "MIT",
   "bin": "index.js",
@@ -9,8 +9,8 @@
     "server"
   ],
   "scripts": {
-    "front:serve": "npm run serve --prefix ./frontend",
-    "front:build": "npm run build --prefix ./frontend",
+    "start": "npm run serve --prefix ./frontend",
+    "build": "npm run build --prefix ./frontend",
     "server:run": "node ./index.js"
   },
   "dependencies": {

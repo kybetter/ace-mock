@@ -4,9 +4,19 @@
       <a-col :span="5">
         <div class="list">
           <div class="list-header">
+            <a-select
+              :defaultValue="editorLanguage"
+              style="width: 100%;"
+              class="select-style"
+              @change="handleLanguageChange"
+            >
+              <a-select-option value="json">Language Mode: json</a-select-option>
+              <a-select-option value="html">Language Mode: html</a-select-option>
+            </a-select>
             <a-input
               class="search-input"
-              placeholder="search keywords（coming soon）"
+              placeholder="search API"
+              v-model="searchText"
             ></a-input>
             <div class="create">
               <a-button icon="plus" type="link" @click="openCreateApiDialog"
@@ -16,20 +26,22 @@
           </div>
           <div class="list-content">
             <div
-              v-for="item in apiList"
+              v-for="item in filterAPIList"
               :key="item.doc._id"
               class="list-wrapper"
             >
-              <div
-                @click="setCurrentApi(item)"
+              <a-row
                 :class="[
                   'list-item',
                   { active: item.doc._id === currentApi._id }
                 ]"
               >
-                <span>[{{ item.doc.method }}]&nbsp;</span>
-                <span>{{ item.doc.api }}</span>
-              </div>
+                <a-col :span="6">
+                  <a-tag color="blue" v-if="item.doc.method === 'POST'">{{ item.doc.method }}</a-tag>
+                  <a-tag color="cyan" v-else>{{ item.doc.method }}</a-tag>
+                </a-col>
+                <a-col :span="18" @click="setCurrentApi(item)">{{ item.doc.api }}</a-col>
+              </a-row>
               <div class="option">
                 <a-button
                   @click="openEditApiDialog(item)"
@@ -76,18 +88,28 @@ export default {
       editorValue: "",
       editorLanguage: "json",
       apiList: [],
-      currentApi: {}
+      currentApi: {},
+      searchText: '',
     };
   },
   computed: {
     isSetCurrentApi() {
       return Object.keys(this.currentApi).length > 0;
     },
+    filterAPIList() {
+      if (this.apiList.length === 0) return [];
+
+      return this.apiList.filter(item => item.doc.api.indexOf(this.searchText) !== -1);
+    },
   },
   created() {
     this.requestNormalApiList();
   },
   methods: {
+    handleLanguageChange(value) {
+      this.editorLanguage = value;
+    },
+
     requestNormalApiList() {
       return this.$http.post("get-normal-api-list").then(res => {
         this.apiList = res.data.data.rows;
@@ -160,6 +182,11 @@ export default {
   border-radius: 0;
   border-color: #e8e8e8;
 }
+.select-style {
+  /deep/ .ant-select-selection {
+    border-radius: 0;
+  }
+}
 .cover-container {
   position: relative;
   .cover {
@@ -168,14 +195,14 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255,255,255,.3);
+    background: rgba(255, 255, 255, 0.3);
     z-index: 999;
     cursor: not-allowed;
   }
 }
 .list {
   .list-content {
-    height: calc(100vh - 110px);
+    height: calc(100vh - 142px);
     overflow: auto;
     border: 1px solid #e8e8e8;
     border-top: 0 none;
@@ -189,7 +216,7 @@ export default {
       }
       &:hover {
         .list-item {
-          background: #1890ff;
+          background: rgba(24, 144, 255, .7);
           color: white;
         }
         .option {
@@ -212,7 +239,7 @@ export default {
       border-bottom: 0 none;
     }
     .list-item.active {
-      background: #1890ff;
+      background: rgba(24, 144, 255, .7);
       color: white;
     }
   }

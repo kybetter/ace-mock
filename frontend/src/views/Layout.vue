@@ -9,14 +9,15 @@
     />
     <a-layout-header class="header">
       <div class="logo">ace-mock</div>
-      <a-menu
+      <!-- <a-menu
         theme="dark"
         mode="horizontal"
         :selectedKeys="menuSelectedKeys"
         @click="menuClick"
       >
         <a-menu-item key="/normalapi">NormalAPI</a-menu-item>
-      </a-menu>
+      </a-menu> -->
+      <a href="https://github.com/kybetter/ace-mock" target="_blank">github</a>
     </a-layout-header>
     <a-layout>
       <a-layout style="background:#fff;">
@@ -50,9 +51,10 @@ export default {
         this.serverClosed = false;
       });
     },
-    menuClick(path) {
-      this.menuSelectedKeys = [path.key];
-      this.$router.push(path.key);
+    menuClick() {
+      // this.menuSelectedKeys = [path.key];
+      // this.$router.push(path.key);
+      window.open('https://github.com/kybetter/ace-mock')
     },
     setSelectedKeys() {
       const {path} = this.$route;
@@ -70,9 +72,6 @@ export default {
   height: 46px;
   line-height: 46px;
   padding: 0 30px;
-}
-.sider {
-  min-height: calc(100vh - 46px);
 }
 .logo {
   width: 170px;
