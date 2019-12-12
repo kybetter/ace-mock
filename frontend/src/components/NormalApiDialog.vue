@@ -1,5 +1,5 @@
 <template>
-  <a-modal title="Create" v-model="visible" @ok="handleOk">
+  <a-modal :title="type" v-model="visible" @ok="handleOk">
     <a-form :form="form">
       <a-form-item v-bind="formItemLayout" label="method">
         <a-select
