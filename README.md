@@ -2,11 +2,15 @@
 
 POST method API：
 
-![api](./api_gb.jpg)
+![api](./api_bg.jpg)
+
+From this pic, you can use `curl -X POST http://localhost:12345/test3` to fetch your API.
 
 GET method HTML page：
 
 ![page](./html_bg.jpg)
+
+From this pic, you can visit http://localhost:12345/page to see what you have typed.
 
 ace-mock support Mock.js grammar，you can browse this page to learn more: http://mockjs.com/examples.html
 
