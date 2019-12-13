@@ -26,8 +26,12 @@ module.exports = async function run(context) {
   
   try {
     await globalIdDb.get("global_id");
-  } catch {
-    await globalIdDb.put({ _id: "global_id", id: 0 });
+  } catch(e) {
+    try {
+      await globalIdDb.put({ _id: "global_id", id: 0 });
+    } catch(err) {
+      throw err;
+    }
   }
 
   // start webSocket
@@ -42,7 +46,11 @@ module.exports = async function run(context) {
   app.use(express.urlencoded({ extended: true }));
   app.use('/ace-mock-api', aceRouters(app));
 
-  await setCustomApi();
+  try {
+    await setCustomApi();
+  } catch(e) {
+    throw e;
+  }
 
   app.use((req, res, next) => {
     router.handle(req, res, next)
