@@ -1,4 +1,4 @@
-## A fast api-mock service
+## A fast and easy to use api-mock service
 
 POST method API：
 
