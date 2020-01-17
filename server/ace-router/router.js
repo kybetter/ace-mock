@@ -1,5 +1,6 @@
 const express = require('express');
 const setCustomApi = require('../custom-router/router');
+const uuidv4 = require('uuid/v4');
 
 function checkApiExist(req, res) {
   if (
@@ -41,22 +42,14 @@ module.exports = (app) => {
     try {
       if (!checkApiExist(req, res)) return;
     
-      const globalId = await globalIdDb.get('global_id');
-  
       const newApi = {
-        _id: `${globalId.id}`,
+        _id: uuidv4(),
         api: req.body.api,
         method: req.body.method,
         content: "",
       };
       
       await normalApiDb.put(newApi);
-  
-      await globalIdDb.put({
-        _id: 'global_id',
-        _rev: globalId._rev,
-        id: globalId.id += 1,
-      });
   
       await setCustomApi();
   

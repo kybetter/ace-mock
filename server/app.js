@@ -6,6 +6,14 @@ const socket = require('./socket/socket')
 const EventEmitter = require('events')
 const aceRouters = require('./ace-router/router')
 const setCustomApi = require('./custom-router/router');
+const path = require('path');
+const fs = require('fs');
+
+const uploadPath = path.resolve(process.env.HOME, 'ace_mock_uploads');
+
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath);
+}
 
 function setGlobal(context) {
   global.router = null;
@@ -13,8 +21,8 @@ function setGlobal(context) {
   class NewApiEmitter extends EventEmitter { };
   global.apiEvents = new NewApiEmitter();
 
-  global.globalIdDb = new PouchDB(context.globalIdDbName);
   global.normalApiDb = new PouchDB(context.normalApiDbName);
+  global.port = context.port;
 }
 
 
@@ -23,16 +31,6 @@ module.exports = async function run(context) {
 
   const app = express();
   const server = http.createServer(app);
-  
-  try {
-    await globalIdDb.get("global_id");
-  } catch(e) {
-    try {
-      await globalIdDb.put({ _id: "global_id", id: 0 });
-    } catch(err) {
-      throw err;
-    }
-  }
 
   // start webSocket
   socket(server);
@@ -57,7 +55,9 @@ module.exports = async function run(context) {
   })
 
   const { port, staticPath } = context;
-  app.use('/', express.static(staticPath))
+  app.use('/', express.static(staticPath));
+  app.use('/files', express.static(uploadPath));
+
   server.listen(port, () => {
     process.stdout.write(`ace-mock listen at: http://localhost:${port}`);
   })

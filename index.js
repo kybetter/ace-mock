@@ -13,7 +13,6 @@ const context = {
   home: process.env.HOME || '.',
 };
 
-context.globalIdDbName = path.resolve(context.home, '.ace-mock', 'globalid');
 context.normalApiDbName = path.resolve(context.home, '.ace-mock', 'normalapi');
 
 run(context);

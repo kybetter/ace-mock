@@ -30,8 +30,10 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "mockjs": "^1.1.0",
+    "multer": "^1.4.2",
     "pouchdb": "^7.1.1",
     "socket.io": "^2.3.0",
+    "uuid": "^3.4.0",
     "yargs-parser": "^16.1.0"
   },
   "engines": {
