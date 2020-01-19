@@ -47,7 +47,15 @@ module.exports = async function setCustomApi() {
           }
           
           const obj = JSON.parse(content);
-          res.send(Mock.mock(obj));
+
+          // func3: 模拟网络延迟
+          if (typeof obj['@delay'] === 'number') {
+            setTimeout(() => {
+              res.send(Mock.mock(obj));
+            }, obj['@delay'])
+          } else {
+            res.send(Mock.mock(obj));
+          }
         } catch(e) {
           res.send(content);
         }
