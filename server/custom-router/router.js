@@ -22,20 +22,30 @@ module.exports = async function setCustomApi() {
   try {
     const apiList = await normalApiDb.allDocs({ include_docs: true });
     apiList.rows.forEach(item => {
-      router[item.doc.method.toLowerCase()](item.doc.api, upload.single('file'), (req, res) => {
+      router[item.doc.method.toLowerCase()](item.doc.api, upload.array('file'), (req, res) => {
         let content = item.doc.content
         try {
-          // 返回上传文件链接
-          if (req.file) {
-            content = content.replace('@upload()', `http://localhost:${port}/files/${req.file.filename}`)
+          // func1: 返回上传文件链接
+          if (Array.isArray(req.files)) {
+            if (req.files.length > 1) {
+              const uploadUrls = [];
+              req.files.forEach(file => {
+                uploadUrls.push(`http://localhost:${port}/files/${file.filename}`)
+              })
+              content = content.replace('"@upload()"', JSON.stringify(uploadUrls));
+            } else {
+              content = content.replace('@upload()', `http://localhost:${port}/files/${req.files[0].filename}`)
+            }
           }
-          // 返回用户请求的字段
+
+          // func2: 返回用户请求的字段
           const reqKeys = Object.keys(req.body);
           if (reqKeys.length > 0) {
             reqKeys.forEach(key => {
               content = content.replace(`@request(${key})`, req.body[key]);
             })
           }
+          
           const obj = JSON.parse(content);
           res.send(Mock.mock(obj));
         } catch(e) {
