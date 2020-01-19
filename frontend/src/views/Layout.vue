@@ -2,21 +2,13 @@
   <a-layout>
     <a-alert
       v-if="serverClosed"
-      message="Server Error"
-      description="Your local server seems to be closed, plase reopen it to save your changes."
+      message="服务错误"
+      description="本地服务被关闭了，请再次打开它，以便能够保存你做的修改。"
       type="error"
       showIcon
     />
     <a-layout-header class="header">
       <div class="logo">ace-mock</div>
-      <!-- <a-menu
-        theme="dark"
-        mode="horizontal"
-        :selectedKeys="menuSelectedKeys"
-        @click="menuClick"
-      >
-        <a-menu-item key="/normalapi">NormalAPI</a-menu-item>
-      </a-menu> -->
       <a href="https://github.com/kybetter/ace-mock" target="_blank">github</a>
     </a-layout-header>
     <a-layout>
@@ -34,7 +26,6 @@ export default {
   name: "Layout",
   data() {
     return {
-      menuSelectedKeys: [],
       serverClosed: false,
     };
   },
@@ -50,19 +41,6 @@ export default {
       this.$io.on("reconnect", () => {
         this.serverClosed = false;
       });
-    },
-    menuClick() {
-      // this.menuSelectedKeys = [path.key];
-      // this.$router.push(path.key);
-      window.open('https://github.com/kybetter/ace-mock')
-    },
-    setSelectedKeys() {
-      const {path} = this.$route;
-      if (path === '/') {
-        this.menuSelectedKeys = ["/normalapi"];
-      } else {
-        this.menuSelectedKeys = [path];
-      }
     },
   }
 };

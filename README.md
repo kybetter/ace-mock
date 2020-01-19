@@ -1,40 +1,38 @@
-## A fast and easy to use api-mock service
+# 一款前端 api mock 工具
 
-POST method API：
+POST 方法 API：
 
 ![api](./api_bg.jpg)
 
-From this pic, you can use `curl -X POST http://localhost:12345/test3` to fetch your API.
+当设置好 API 后，就可以直接请求了，例如：`curl -X POST http://localhost:12345/test3`。
 
-GET method HTML page：
+设置 GET 方法 API 时，可以写 HTML：
 
 ![page](./html_bg.jpg)
 
-From this pic, you can visit http://localhost:12345/page to see what you have typed.
+当设置好 API 后，访问：`http://localhost:12345/page` 就可以看到页面了。
 
-ace-mock support Mock.js grammar，you can browse this page to learn more: http://mockjs.com/examples.html
+ace-mock 支持 Mock.js 语法，如有需要，可以参考：http://mockjs.com/examples.html
 
-#### install
+#### 安装
 ```sh
 $ yarn global add ace-mock
 # or
 $ npm i -g ace-mock
 ```
 
-#### usage
+#### 使用
 
 ```
 $ ace-mock [options]
 ```
 
-#### example
+#### 示例
 
 ```sh
 $ ace-mock
 # or
-$ ace-mock --port=your port
+$ ace-mock --port=12345
 ```
 
-Then it will start a service to serve at:`http://localhost:12345`address in default.
-
-Now, you can browse this page and set your api.
+执行上述命令后，就会开启 mock 服务，地址为：`http://localhost:12345`

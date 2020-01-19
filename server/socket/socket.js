@@ -6,11 +6,12 @@ module.exports = server => {
   io.on('connection', socket => {
     socket.on('setValue', async value => {
       try {
-        const normalApi = await normalApiDb.get(value.id);
-        await normalApiDb.put({
+        const normalApi = await db.get(value.id);
+        await db.put({
           _id: normalApi._id,
           _rev: normalApi._rev,
-          api: normalApi.api,
+          apiName: normalApi.apiName,
+          apiPath: normalApi.apiPath,
           method: normalApi.method,
           content: value.content,
         })

@@ -9,8 +9,8 @@
     "server"
   ],
   "scripts": {
-    "start": "npm run serve --prefix ./frontend",
-    "build": "npm run build --prefix ./frontend",
+    "fe-dev": "npm run serve --prefix ./frontend",
+    "fe-build": "npm run build --prefix ./frontend",
     "server": "node ./index.js"
   },
   "repository": {

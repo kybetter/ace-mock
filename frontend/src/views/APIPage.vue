@@ -10,8 +10,8 @@
               class="select-style"
               @change="handleLanguageChange"
             >
-              <a-select-option value="json">Language Mode: json</a-select-option>
-              <a-select-option value="html">Language Mode: html</a-select-option>
+              <a-select-option value="json">编辑器语言：JSON</a-select-option>
+              <a-select-option value="html">编辑器语言：HTML</a-select-option>
             </a-select>
             <a-input
               class="search-input"
@@ -19,7 +19,7 @@
               v-model="searchText"
             ></a-input>
             <div class="create">
-              <a-button icon="plus" type="link" @click="openCreateApiDialog"
+              <a-button icon="plus" type="link" @click="openCreateApi"
                 >create new</a-button
               >
             </div>
@@ -37,14 +37,18 @@
                 ]"
               >
                 <a-col :span="6">
-                  <a-tag color="blue" v-if="item.doc.method === 'POST'">{{ item.doc.method }}</a-tag>
+                  <a-tag color="blue" v-if="item.doc.method === 'POST'">{{
+                    item.doc.method
+                  }}</a-tag>
                   <a-tag color="cyan" v-else>{{ item.doc.method }}</a-tag>
                 </a-col>
-                <a-col :span="18" @click="setCurrentApi(item)">{{ item.doc.api }}</a-col>
+                <a-col :span="18" @click="setCurrentApi(item)">{{
+                  item.doc.apiName
+                }}</a-col>
               </a-row>
               <div class="option">
                 <a-button
-                  @click="openEditApiDialog(item)"
+                  @click="openEditApi(item)"
                   size="small"
                   icon="edit"
                 ></a-button
@@ -61,6 +65,7 @@
         </div>
       </a-col>
       <a-col :span="19">
+        <div class="api-url">API 路径：{{ apiPath }}</div>
         <div class="cover-container">
           <div class="cover" v-if="!isSetCurrentApi"></div>
           <editor
@@ -72,16 +77,18 @@
         </div>
       </a-col>
     </a-row>
-    <normal-api-dialog ref="api-dialog" @success="onCreateSuccess" />
+    <create-api ref="create-api" @success="handleSuccess" />
+    <edit-api ref="edit-api" @success="handleSuccess" />
   </div>
 </template>
 <script>
 import Editor from "@/components/Editor.vue";
-import NormalApiDialog from "@/components/NormalApiDialog.vue";
+import CreateApi from './form/Create.vue';
+import EditApi from './form/Edit.vue';
 
 export default {
   name: "NormalAPI",
-  components: { NormalApiDialog, Editor },
+  components: { CreateApi, EditApi, Editor },
   data() {
     return {
       editor: null,
@@ -89,7 +96,7 @@ export default {
       editorLanguage: "json",
       apiList: [],
       currentApi: {},
-      searchText: '',
+      searchText: ""
     };
   },
   computed: {
@@ -99,7 +106,12 @@ export default {
     filterAPIList() {
       if (this.apiList.length === 0) return [];
 
-      return this.apiList.filter(item => item.doc.api.indexOf(this.searchText) !== -1);
+      return this.apiList.filter(
+        item => item.doc.apiName.indexOf(this.searchText) !== -1
+      );
+    },
+    apiPath() {
+      return this.currentApi.apiPath || '--';
     },
   },
   created() {
@@ -111,7 +123,7 @@ export default {
     },
 
     requestNormalApiList() {
-      return this.$http.post("get-normal-api-list").then(res => {
+      return this.$http.post("api-list").then(res => {
         this.apiList = res.data.data.rows;
       });
     },
@@ -127,28 +139,25 @@ export default {
         this.currentApi.content = content;
         this.$io.emit("setValue", {
           id: this.currentApi._id,
-          api: this.currentApi.api,
           content
         });
       }
     },
 
-    openEditApiDialog(item) {
-      this.$refs["api-dialog"].type = "edit";
-      this.$refs["api-dialog"].visible = true;
-      this.$refs["api-dialog"].formData = item.doc;
+    openEditApi(item) {
+      this.$refs["edit-api"].visible = true;
+      this.$refs["edit-api"].detail = item.doc;
     },
 
-    openCreateApiDialog() {
-      this.$refs["api-dialog"].type = "create";
-      this.$refs["api-dialog"].visible = true;
+    openCreateApi() {
+      this.$refs["create-api"].visible = true;
     },
 
-    async onCreateSuccess(value) {
+    async handleSuccess(value) {
       try {
         await this.requestNormalApiList();
         this.apiList.forEach(item => {
-          if (item.doc.api === value.api) {
+          if (item.doc.apiPath === value.apiPath) {
             this.currentApi = item.doc;
             this.$refs.editor.setValue(this.currentApi.content);
           }
@@ -159,7 +168,7 @@ export default {
     },
 
     deleteApi(item) {
-      this.$http.post("delete-normal-api", item.doc).then(() => {
+      this.$http.post("delete-api", item.doc).then(() => {
         this.$message.success("DONE");
         if (item.doc._id === this.currentApi._id) {
           this.currentApi = {};
@@ -172,8 +181,13 @@ export default {
 };
 </script>
 <style scoped lang="less">
+.api-url {
+  height: 32px;
+  line-height: 32px;
+  padding: 0 10px;
+}
 .editor {
-  height: calc(100vh - 46px);
+  height: calc(100vh - 78px);
 }
 .create {
   text-align: center;
@@ -216,7 +230,7 @@ export default {
       }
       &:hover {
         .list-item {
-          background: rgba(24, 144, 255, .7);
+          background: rgba(24, 144, 255, 0.7);
           color: white;
         }
         .option {
@@ -239,7 +253,7 @@ export default {
       border-bottom: 0 none;
     }
     .list-item.active {
-      background: rgba(24, 144, 255, .7);
+      background: rgba(24, 144, 255, 0.7);
       color: white;
     }
   }

@@ -20,9 +20,9 @@ module.exports = async function setCustomApi() {
   // make sure old api is not avaliable.
   router = new express.Router();
   try {
-    const apiList = await normalApiDb.allDocs({ include_docs: true });
+    const apiList = await db.allDocs({ include_docs: true });
     apiList.rows.forEach(item => {
-      router[item.doc.method.toLowerCase()](item.doc.api, upload.array('file'), (req, res) => {
+      router[item.doc.method.toLowerCase()](item.doc.apiPath, upload.array('file'), (req, res) => {
         let content = item.doc.content
         try {
           // func1: 返回上传文件链接

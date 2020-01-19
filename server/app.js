@@ -21,10 +21,9 @@ function setGlobal(context) {
   class NewApiEmitter extends EventEmitter { };
   global.apiEvents = new NewApiEmitter();
 
-  global.normalApiDb = new PouchDB(context.normalApiDbName);
+  global.db = new PouchDB(path.resolve(process.env.HOME, 'ace_mock'));
   global.port = context.port;
 }
-
 
 module.exports = async function run(context) {
   setGlobal(context);
@@ -54,8 +53,8 @@ module.exports = async function run(context) {
     router.handle(req, res, next)
   })
 
-  const { port, staticPath } = context;
-  app.use('/', express.static(staticPath));
+  const { port } = context;
+  app.use('/', express.static(path.resolve(__dirname, 'dist')));
   app.use('/files', express.static(uploadPath));
 
   server.listen(port, () => {

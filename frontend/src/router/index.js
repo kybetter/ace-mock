@@ -1,8 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Layout from '../views/Layout.vue'
-import NormalAPI from '../views/NormalAPI.vue'
-import GraphQL from '../views/GraphQL.vue'
+import APIPage from '../views/APIPage.vue'
 
 Vue.use(VueRouter)
 
@@ -12,15 +11,10 @@ const routes = [
     component: Layout,
     children: [
       {
-        path: 'normalapi',
+        path: 'api-view',
         alias: '',
-        name: 'normalapi',
-        component: NormalAPI,
-      },
-      {
-        path: 'graphql',
-        name: 'graphql',
-        component: GraphQL,
+        name: 'APIPage',
+        component: APIPage,
       },
     ]
   },
