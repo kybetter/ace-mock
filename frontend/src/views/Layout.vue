@@ -30,7 +30,6 @@ export default {
     };
   },
   created() {
-    this.setSelectedKeys();
     this.monitSocket();
   },
   methods: {
