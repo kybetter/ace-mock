@@ -140,7 +140,7 @@ $ ace-mock --port=12345
 
 示例：
 
-![html](./html_preview.png)
+![html](./html-preview.png)
 
 这时，访问：`http://localhost:12345/page1` 就可以看到所编辑的页面了
 
