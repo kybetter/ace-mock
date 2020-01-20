@@ -45,7 +45,7 @@ module.exports = async function run(context) {
 
   try {
     await setCustomApi();
-  } catch(e) {
+  } catch (e) {
     throw e;
   }
 
@@ -59,5 +59,7 @@ module.exports = async function run(context) {
 
   server.listen(port, () => {
     process.stdout.write(`ace-mock listen at: http://localhost:${port}`);
+    const { spawn } = require('child_process');
+    spawn('open', [`http://localhost:${port}`]);
   })
 }
