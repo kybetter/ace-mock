@@ -1,6 +1,6 @@
 {
   "name": "ace-mock",
-  "version": "2.4.5",
+  "version": "2.4.6",
   "description": "A fast and easy to use local API mock service",
   "main": "index.js",
   "bin": "index.js",
