@@ -54,7 +54,7 @@ module.exports = async function run(context) {
   })
 
   const { port } = context;
-  app.use('/', express.static(path.resolve(__dirname, 'dist')));
+  app.use('/', express.static(path.resolve(__dirname, '..', 'dist')));
   app.use('/files', express.static(uploadPath));
 
   server.listen(port, () => {
