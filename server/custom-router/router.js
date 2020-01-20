@@ -42,7 +42,7 @@ module.exports = async function setCustomApi() {
           const reqKeys = Object.keys(req.body);
           if (reqKeys.length > 0) {
             reqKeys.forEach(key => {
-              content = content.replace(`@request(${key})`, req.body[key]);
+              content = content.replace(`"@request(${key})"`, req.body[key]);
             })
           }
           
