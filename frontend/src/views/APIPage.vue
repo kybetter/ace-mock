@@ -66,7 +66,7 @@
       </a-col>
       <a-col :span="19">
         <div class="api-url">
-          <a-button size="small" class="copy" @click="handleCopy">复制完整 URL</a-button>
+          <a-button v-if="showCopyBtn" size="small" class="copy" @click="handleCopy">复制完整 URL</a-button>
           <span>API 路径：{{ apiPath }}</span>
         </div>
         <div class="cover-container">
