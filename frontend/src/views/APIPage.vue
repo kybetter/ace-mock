@@ -15,7 +15,7 @@
             </a-select>
             <a-input
               class="search-input"
-              placeholder="search API"
+              placeholder="搜索"
               v-model="searchText"
             ></a-input>
             <div class="create">
@@ -65,7 +65,10 @@
         </div>
       </a-col>
       <a-col :span="19">
-        <div class="api-url">API 路径：{{ apiPath }}</div>
+        <div class="api-url">
+          <a-button size="small" class="copy" @click="handleCopy">复制完整 URL</a-button>
+          <span>API 路径：{{ apiPath }}</span>
+        </div>
         <div class="cover-container">
           <div class="cover" v-if="!isSetCurrentApi"></div>
           <editor
@@ -82,9 +85,10 @@
   </div>
 </template>
 <script>
+import copy from 'copy-to-clipboard';
 import Editor from "@/components/Editor.vue";
-import CreateApi from './form/Create.vue';
-import EditApi from './form/Edit.vue';
+import CreateApi from "./form/Create.vue";
+import EditApi from "./form/Edit.vue";
 
 export default {
   name: "NormalAPI",
@@ -111,13 +115,23 @@ export default {
       );
     },
     apiPath() {
-      return this.currentApi.apiPath || '--';
+      return this.currentApi.apiPath || "--";
     },
+    showCopyBtn() {
+      return !!this.currentApi.apiPath;
+    }
   },
   created() {
     this.requestNormalApiList();
   },
   methods: {
+    handleCopy() {
+      if (copy(`http://localhost:${window.location.port}${this.currentApi.apiPath}`)) {
+        this.$message.success('复制完成');
+      } else {
+        this.$message.error('复制失败，请报 issue 给我');
+      }
+    },
     handleLanguageChange(value) {
       this.editorLanguage = value;
     },
@@ -257,5 +271,9 @@ export default {
       color: white;
     }
   }
+}
+.copy {
+  font-size: 12px;
+  margin-right: 10px;
 }
 </style>
