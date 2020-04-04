@@ -1,5 +1,5 @@
 <template>
-  <a-modal title="编辑 API" v-model="visible" @ok="handleOk">
+  <a-modal title="编辑接口" v-model="visible" @ok="handleOk" destroyOnClose>
     <a-form :form="form">
       <base-form :form="form" :detail="detail" />
     </a-form>
@@ -7,35 +7,14 @@
 </template>
 <script>
 import BaseForm from "./BaseForm";
+import FormMxin from "./mixin";
 
 export default {
   name: "EditDialog",
+  mixins: [FormMxin],
   components: { BaseForm },
   data() {
-    return {
-      visible: false,
-      detail: {},
-      formItemLayout: {
-        labelCol: {
-          xs: { span: 24 },
-          sm: { span: 4 }
-        },
-        wrapperCol: {
-          xs: { span: 24 },
-          sm: { span: 20 }
-        }
-      }
-    };
-  },
-  beforeCreate() {
-    this.form = this.$form.createForm(this, { name: "editMock" });
-  },
-  watch: {
-    visible(val) {
-      if (!val) {
-        this.afterClose();
-      }
-    }
+    return {};
   },
   methods: {
     handleOk(e) {
@@ -59,11 +38,6 @@ export default {
         }
       });
     },
-
-    afterClose() {
-      this.form.resetFields();
-      this.detail = {};
-    }
   }
 };
 </script>

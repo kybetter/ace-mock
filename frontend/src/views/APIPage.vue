@@ -20,7 +20,7 @@
             ></a-input>
             <div class="create">
               <a-button icon="plus" type="link" @click="openCreateApi"
-                >create new</a-button
+                >新增接口</a-button
               >
             </div>
           </div>
@@ -33,7 +33,7 @@
               <a-row
                 :class="[
                   'list-item',
-                  { active: item.doc._id === currentApi._id }
+                  { active: item.doc._id === currentApi._id },
                 ]"
               >
                 <a-col :span="6">
@@ -66,8 +66,14 @@
       </a-col>
       <a-col :span="19">
         <div class="api-url">
-          <a-button v-if="showCopyBtn" size="small" class="copy" @click="handleCopy">复制完整 URL</a-button>
-          <span>API 路径：{{ apiPath }}</span>
+          <a-button
+            v-if="showCopyBtn"
+            size="small"
+            class="copy"
+            @click="handleCopy"
+            >复制完整 URL</a-button
+          >
+          <span>接口：{{ apiPath }}</span>
         </div>
         <div class="cover-container">
           <div class="cover" v-if="!isSetCurrentApi"></div>
@@ -85,7 +91,7 @@
   </div>
 </template>
 <script>
-import copy from 'copy-to-clipboard';
+import copy from "copy-to-clipboard";
 import Editor from "@/components/Editor.vue";
 import CreateApi from "./form/Create.vue";
 import EditApi from "./form/Edit.vue";
@@ -100,7 +106,7 @@ export default {
       editorLanguage: "json",
       apiList: [],
       currentApi: {},
-      searchText: ""
+      searchText: "",
     };
   },
   computed: {
@@ -111,7 +117,7 @@ export default {
       if (this.apiList.length === 0) return [];
 
       return this.apiList.filter(
-        item => item.doc.apiName.indexOf(this.searchText) !== -1
+        (item) => item.doc.apiName.indexOf(this.searchText) !== -1
       );
     },
     apiPath() {
@@ -119,17 +125,21 @@ export default {
     },
     showCopyBtn() {
       return !!this.currentApi.apiPath;
-    }
+    },
   },
   created() {
     this.requestNormalApiList();
   },
   methods: {
     handleCopy() {
-      if (copy(`http://localhost:${window.location.port}${this.currentApi.apiPath}`)) {
-        this.$message.success('复制完成');
+      if (
+        copy(
+          `http://localhost:${window.location.port}${this.currentApi.apiPath}`
+        )
+      ) {
+        this.$message.success("复制完成");
       } else {
-        this.$message.error('复制失败，请报 issue 给我');
+        this.$message.error("复制失败，请报 issue 给我");
       }
     },
     handleLanguageChange(value) {
@@ -137,7 +147,7 @@ export default {
     },
 
     requestNormalApiList() {
-      return this.$http.post("api-list").then(res => {
+      return this.$http.post("api-list").then((res) => {
         this.apiList = res.data.data.rows;
       });
     },
@@ -153,7 +163,7 @@ export default {
         this.currentApi.content = content;
         this.$io.emit("setValue", {
           id: this.currentApi._id,
-          content
+          content,
         });
       }
     },
@@ -167,18 +177,17 @@ export default {
       this.$refs["create-api"].visible = true;
     },
 
+    /**
+     * 处理创建/编辑成功接口逻辑
+     */
     async handleSuccess(value) {
-      try {
-        await this.requestNormalApiList();
-        this.apiList.forEach(item => {
-          if (item.doc.apiPath === value.apiPath) {
-            this.currentApi = item.doc;
-            this.$refs.editor.setValue(this.currentApi.content);
-          }
-        });
-      } catch (e) {
-        throw e;
-      }
+      await this.requestNormalApiList();
+      this.apiList.forEach((item) => {
+        if (item.doc.apiPath === value.apiPath) {
+          this.currentApi = item.doc;
+          this.$refs.editor.setValue(this.currentApi.content);
+        }
+      });
     },
 
     deleteApi(item) {
@@ -190,8 +199,8 @@ export default {
         }
         this.requestNormalApiList();
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped lang="less">

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-form-item v-bind="formItemLayout" label="API 名字">
+    <a-form-item v-bind="formItemLayout" label="API 名称">
       <a-input
         v-decorator="[
           'apiName',
@@ -9,12 +9,12 @@
             rules: [
               {
                 required: true,
-                message: '请输入 API 名字'
+                message: '请输入 API 名称'
               }
             ]
           }
         ]"
-        placeholder="API 名字将会在列表展示"
+        placeholder="API 名称将会在左侧列表展示"
       />
     </a-form-item>
     <a-form-item v-bind="formItemLayout" label="方法">

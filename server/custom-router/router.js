@@ -3,7 +3,10 @@ const Mock = require('mockjs');
 const multer = require('multer');
 const path = require('path');
 
+// 设置上传文件夹
 const uploadPath = path.resolve(process.env.HOME, 'ace_mock_uploads');
+
+// 配置上传路径和文件名
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadPath);
@@ -17,13 +20,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 module.exports = async function setCustomApi() {
-  // make sure old api is not avaliable.
+  // 使用新的路由实例，用以让老路由失效
   router = new express.Router();
   try {
     const apiList = await db.allDocs({ include_docs: true });
     apiList.rows.forEach(item => {
       router[item.doc.method.toLowerCase()](item.doc.apiPath, upload.array('file'), (req, res) => {
-        let content = item.doc.content
+        let { content } = item.doc;
         try {
           // func1: 返回上传文件链接
           if (Array.isArray(req.files)) {
@@ -45,7 +48,7 @@ module.exports = async function setCustomApi() {
               content = content.replace(`"@request(${key})"`, req.body[key]);
             })
           }
-          
+
           const obj = JSON.parse(content);
 
           // func3: 模拟网络延迟
@@ -56,12 +59,12 @@ module.exports = async function setCustomApi() {
           } else {
             res.send(Mock.mock(obj));
           }
-        } catch(e) {
+        } catch (e) {
           res.send(content);
         }
       })
     })
-  } catch(e) {
+  } catch (e) {
     throw e;
   }
 }

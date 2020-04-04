@@ -15,18 +15,18 @@ if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath);
 }
 
-function setGlobal(context) {
+function setGlobal(config) {
   global.router = null;
 
   class NewApiEmitter extends EventEmitter { };
   global.apiEvents = new NewApiEmitter();
 
   global.db = new PouchDB(path.resolve(process.env.HOME, 'ace_mock'));
-  global.port = context.port;
+  global.port = config.port;
 }
 
-module.exports = async function run(context) {
-  setGlobal(context);
+module.exports = async function run(config) {
+  setGlobal(config);
 
   const app = express();
   const server = http.createServer(app);
@@ -53,13 +53,13 @@ module.exports = async function run(context) {
     router.handle(req, res, next)
   })
 
-  const { port } = context;
+  const { port } = config;
   app.use('/', express.static(path.resolve(__dirname, '..', 'dist')));
   app.use('/files', express.static(uploadPath));
 
   server.listen(port, () => {
     process.stdout.write(`ace-mock listen at: http://localhost:${port}`);
-    const { spawn } = require('child_process');
-    spawn('open', [`http://localhost:${port}`]);
+    // const { spawn } = require('child_process');
+    // spawn('open', [`http://localhost:${port}`]);
   })
 }

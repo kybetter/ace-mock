@@ -31,10 +31,10 @@
     "express": "^4.17.1",
     "mockjs": "^1.1.0",
     "multer": "^1.4.2",
-    "pouchdb": "^7.1.1",
+    "pouchdb": "^7.2.1",
     "socket.io": "^2.3.0",
-    "uuid": "^3.4.0",
-    "yargs-parser": "^16.1.0"
+    "uuid": "^7.0.3",
+    "yargs-parser": "^18.1.2"
   },
   "engines": {
     "node": ">=8.6.0"
