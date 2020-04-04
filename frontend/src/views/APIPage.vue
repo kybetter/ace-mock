@@ -73,7 +73,7 @@
             @click="handleCopy"
             >复制完整 URL</a-button
           >
-          <span>接口：{{ apiPath }}</span>
+          <span>接口：<span style="color: #1890ff">{{ apiPath }}</span></span>
         </div>
         <div class="cover-container">
           <div class="cover" v-if="!isSetCurrentApi"></div>

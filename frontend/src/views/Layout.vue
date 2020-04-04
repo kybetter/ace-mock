@@ -28,6 +28,7 @@
           ></path>
         </svg>
       </a>
+      <a-button type="link" @click="showUsage" style="margin-left: 20px">查看使用示例</a-button>
     </a-layout-header>
     <a-layout>
       <a-layout style="background: #fff;">
@@ -36,12 +37,17 @@
         </a-layout-content>
       </a-layout>
     </a-layout>
+
+    <usage ref="usage" />
   </a-layout>
 </template>
 
 <script>
+import Usage from '@/components/Usage.vue';
+
 export default {
   name: "Layout",
+  components: {Usage},
   data() {
     return {
       serverClosed: false,
@@ -58,6 +64,10 @@ export default {
       this.$io.on("reconnect", () => {
         this.serverClosed = false;
       });
+    },
+
+    showUsage() {
+      this.$refs.usage.visible = true;
     },
   },
 };

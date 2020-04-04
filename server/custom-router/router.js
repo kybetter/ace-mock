@@ -51,6 +51,11 @@ module.exports = async function setCustomApi() {
 
           const obj = JSON.parse(content);
 
+          // func4: 模拟接口异常
+          if ('@status' in obj) {
+            res = res.status(obj['@status']);
+          }
+
           // func3: 模拟网络延迟
           if (typeof obj['@delay'] === 'number') {
             setTimeout(() => {

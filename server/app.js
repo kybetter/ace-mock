@@ -59,7 +59,7 @@ module.exports = async function run(config) {
 
   server.listen(port, () => {
     process.stdout.write(`ace-mock listen at: http://localhost:${port}`);
-    // const { spawn } = require('child_process');
-    // spawn('open', [`http://localhost:${port}`]);
+    const { spawn } = require('child_process');
+    spawn('open', [`http://localhost:${port}`]);
   })
 }
